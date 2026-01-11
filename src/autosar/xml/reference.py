@@ -473,6 +473,7 @@ class SwComponentTypeRef(BaseRef):
     def accepted_sub_types(cls) -> set[ar_enum.IdentifiableSubTypes]:
         """Acceptable values for dest"""
         return {ar_enum.IdentifiableSubTypes.APPLICATION_SW_COMPONENT_TYPE,
+                ar_enum.IdentifiableSubTypes.ECU_ABSTRACTION_SW_COMPONENT_TYPE,
                 ar_enum.IdentifiableSubTypes.COMPOSITION_SW_COMPONENT_TYPE,
                 }
 
