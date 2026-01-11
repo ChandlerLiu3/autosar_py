@@ -170,6 +170,7 @@ class Reader:
 
             # Software component elements
             'APPLICATION-SW-COMPONENT-TYPE': self._read_application_sw_component_type,
+            'ECU-ABSTRACTION-SW-COMPONENT-TYPE': self._read_application_sw_component_type,
             'COMPOSITION-SW-COMPONENT-TYPE': self._read_composition_sw_component_type,
             'SWC-IMPLEMENTATION': self._read_swc_implementation,
 
@@ -4412,8 +4413,8 @@ class Reader:
                                             xml_element: ElementTree.Element
                                             ) -> ar_element.ApplicationSoftwareComponentType:
         """
-        Reads complex type AR:APPLICATION-SW-COMPONENT-TYPE
-        Tag variants: 'APPLICATION-SW-COMPONENT-TYPE'
+        Reads complex type AR:APPLICATION-SW-COMPONENT-TYPE, AR:ECU-ABSTRACTION-SW-COMPONENT-TYPE
+        Tag variants: 'APPLICATION-SW-COMPONENT-TYPE', 'ECU-ABSTRACTION-SW-COMPONENT-TYPE'
         """
         data = {}
         child_elements = ChildElementMap(xml_element)

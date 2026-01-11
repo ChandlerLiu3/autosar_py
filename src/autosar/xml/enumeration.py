@@ -294,6 +294,7 @@ class IdentifiableSubTypes(Enum):
     UNIT = 72
     VARIABLE_ACCESS = 73
     VARIABLE_DATA_PROTOTYPE = 74
+    ECU_ABSTRACTION_SW_COMPONENT_TYPE = 75
 
 
 class IntervalType(Enum):
@@ -857,6 +858,7 @@ xml_to_enum_map: dict[str, dict] = {
         "DATA-TYPE-MAPPING-SET": IdentifiableSubTypes.DATA_TYPE_MAPPING_SET,
         "DATA-WRITE-COMPLETED-EVENT": IdentifiableSubTypes.DATA_WRITE_COMPLETED_EVENT,
         "E-2-E-PROFILE-COMPATIBILITY-PROPS": IdentifiableSubTypes.E2E_PROFILE_COMPATIBILITY_PROPS,
+        "ECU-ABSTRACTION-SW-COMPONENT-TYPE": IdentifiableSubTypes.ECU_ABSTRACTION_SW_COMPONENT_TYPE,
         "EXCLUSIVE-AREA": IdentifiableSubTypes.EXCLUSIVE_AREA,
         "EXCLUSIVE-AREA-NESTING-ORDER": IdentifiableSubTypes.EXCLUSIVE_AREA_NESTING_ORDER,
         "EXTERNAL-TRIGGER-OCCURRED-EVENT": IdentifiableSubTypes.EXTERNAL_TRIGGER_OCCURRED_EVENT,
@@ -1303,6 +1305,7 @@ enum_to_xml_map: dict[str, list] = {
         "UNIT",                                          # 72
         "VARIABLE-ACCESS",                               # 73
         "VARIABLE-DATA-PROTOTYPE",                       # 74
+        "ECU-ABSTRACTION-SW-COMPONENT-TYPE",             # 75
     ],
     "IntervalType": [
         "CLOSED",  # 0
