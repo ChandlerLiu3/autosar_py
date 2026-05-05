@@ -155,6 +155,7 @@ class Reader:
             'SENDER-RECEIVER-INTERFACE': self._read_sender_receiver_interface,
             'CLIENT-SERVER-INTERFACE': self._read_client_server_interface,
             'MODE-SWITCH-INTERFACE': self._read_mode_switch_interface,
+            'TRIGGER-INTERFACE': self._read_trigger_interface,
 
             # Unit elements
             'UNIT': self._read_unit,
@@ -3704,6 +3705,21 @@ class Reader:
             data['mode_group'] = self._read_mode_declaration_group_prototype(xml_child)
         self._report_unprocessed_elements(child_elements)
         return ar_element.ModeSwitchInterface(**data)
+
+    def _read_trigger_interface(self, xml_element: ElementTree.Element) -> ar_element.TriggerInterface:
+        """
+        Reads complex type AR:TRIGGER-INTERFACE
+        Tag variants: 'TRIGGER-INTERFACE'
+        """
+        data = {}
+        child_elements = ChildElementMap(xml_element)
+        self._read_referrable(child_elements, data)
+        self._read_multi_language_referrable(child_elements, data)
+        self._read_identifiable(child_elements, xml_element.attrib, data)
+        self._read_port_interface(child_elements, data)
+        child_elements.skip('TRIGGERS')
+        self._report_unprocessed_elements(child_elements)
+        return ar_element.TriggerInterface(**data)
 
     # --- System template elements
 

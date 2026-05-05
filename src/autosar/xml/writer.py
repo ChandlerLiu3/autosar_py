@@ -217,6 +217,7 @@ class Writer(_XMLWriter):
             'SenderReceiverInterface': self._write_sender_receiver_interface,
             'ClientServerInterface': self._write_client_server_interface,
             'ModeSwitchInterface': self._write_mode_switch_interface,
+            'TriggerInterface': self._write_trigger_interface,
             # Mode declaration elements
             'ModeDeclarationGroup': self._write_mode_declaration_group,
             # System template elements
@@ -3292,6 +3293,19 @@ class Writer(_XMLWriter):
         self._write_port_interface(elem)
         if elem.mode_group is not None:
             self._write_mode_declaration_group_prototype(elem.mode_group, "MODE-GROUP")
+        self._leave_child()
+
+    def _write_trigger_interface(self, elem: ar_element.TriggerInterface) -> None:
+        """
+        Writes complex type AR:TRIGGER-INTERFACE
+        Tag variants: 'TRIGGER-INTERFACE'
+        """
+        assert isinstance(elem, ar_element.TriggerInterface)
+        self._add_child("TRIGGER-INTERFACE")
+        self._write_referrable(elem)
+        self._write_multilanguage_referrable(elem)
+        self._write_identifiable(elem)
+        self._write_port_interface(elem)
         self._leave_child()
 
     # --- System template elements

@@ -295,7 +295,8 @@ class IdentifiableSubTypes(Enum):
     VARIABLE_ACCESS = 73
     VARIABLE_DATA_PROTOTYPE = 74
     ECU_ABSTRACTION_SW_COMPONENT_TYPE = 75
-
+    SERVICE_SW_COMPONENT_TYPE = 76
+    TRIGGER_INTERFACE = 77
 
 class IntervalType(Enum):
     """
@@ -884,6 +885,7 @@ xml_to_enum_map: dict[str, dict] = {
         "R-PORT-PROTOTYPE": IdentifiableSubTypes.R_PORT_PROTOTYPE,
         "RUNNABLE-ENTITY": IdentifiableSubTypes.RUNNABLE_ENTITY,
         "SENDER-RECEIVER-INTERFACE": IdentifiableSubTypes.SENDER_RECEIVER_INTERFACE,
+        "SERVICE-SW-COMPONENT-TYPE": IdentifiableSubTypes.SERVICE_SW_COMPONENT_TYPE,
         "SW-ADDR-METHOD": IdentifiableSubTypes.SW_ADDR_METHOD,
         "SW-BASE-TYPE": IdentifiableSubTypes.SW_BASE_TYPE,
         "SW-COMPONENT-PROTOTYPE": IdentifiableSubTypes.SW_COMPONENT_PROTOTYPE,
@@ -894,6 +896,7 @@ xml_to_enum_map: dict[str, dict] = {
         "TIMING-EVENT": IdentifiableSubTypes.TIMING_EVENT,
         "TRANSFORMER-HARD-ERROR-EVENT": IdentifiableSubTypes.TRANSFORMER_HARD_ERROR_EVENT,
         "TRIGGER": IdentifiableSubTypes.TRIGGER,
+        "TRIGGER-INTERFACE": IdentifiableSubTypes.TRIGGER_INTERFACE,
         "UNIT": IdentifiableSubTypes.UNIT,
         "VARIABLE-ACCESS": IdentifiableSubTypes.VARIABLE_ACCESS,
         "VARIABLE-DATA-PROTOTYPE": IdentifiableSubTypes.VARIABLE_DATA_PROTOTYPE,
@@ -1306,6 +1309,8 @@ enum_to_xml_map: dict[str, list] = {
         "VARIABLE-ACCESS",                               # 73
         "VARIABLE-DATA-PROTOTYPE",                       # 74
         "ECU-ABSTRACTION-SW-COMPONENT-TYPE",             # 75
+        "SERVICE-SW-COMPONENT-TYPE",                     # 76
+        "TRIGGER-INTERFACE",                             # 77
     ],
     "IntervalType": [
         "CLOSED",  # 0

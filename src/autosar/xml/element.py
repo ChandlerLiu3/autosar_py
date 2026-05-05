@@ -4322,6 +4322,32 @@ class ModeSwitchInterface(PortInterface):
         self.mode_group.parent = self
         return self.mode_group
 
+
+class TriggerInterface(PortInterface):
+    """
+    Complex type AR:TRIGGER-INTERFACE
+    Tag variants: 'TRIGGER-INTERFACE'
+
+    The full TRIGGER child model is not implemented yet in this library.
+    This class provides the port-interface shell so TRIGGER-INTERFACE can be
+    parsed, referenced and serialized consistently.
+    """
+
+    def __init__(self,
+                 name: str,
+                 **kwargs) -> None:
+        super().__init__(name, **kwargs)
+
+    def ref(self) -> PortInterfaceRef | None:
+        """
+        Returns a reference to this element or None if the element
+        is not yet part of a package
+        """
+        ref_str = self._calc_ref_string()
+        if ref_str is None:
+            return None
+        return PortInterfaceRef(ref_str, ar_enum.IdentifiableSubTypes.TRIGGER_INTERFACE)
+
 # --- System Template Elements
 
 

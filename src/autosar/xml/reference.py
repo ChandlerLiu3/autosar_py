@@ -459,6 +459,7 @@ class PortInterfaceRef(BaseRef):
                 ar_enum.IdentifiableSubTypes.NV_DATA_INTERFACE,
                 ar_enum.IdentifiableSubTypes.PARAMETER_INTERFACE,
                 ar_enum.IdentifiableSubTypes.SENDER_RECEIVER_INTERFACE,
+                ar_enum.IdentifiableSubTypes.TRIGGER_INTERFACE,
                 }
 
 
@@ -474,6 +475,7 @@ class SwComponentTypeRef(BaseRef):
         """Acceptable values for dest"""
         return {ar_enum.IdentifiableSubTypes.APPLICATION_SW_COMPONENT_TYPE,
                 ar_enum.IdentifiableSubTypes.ECU_ABSTRACTION_SW_COMPONENT_TYPE,
+                ar_enum.IdentifiableSubTypes.SERVICE_SW_COMPONENT_TYPE,
                 ar_enum.IdentifiableSubTypes.COMPOSITION_SW_COMPONENT_TYPE,
                 }
 

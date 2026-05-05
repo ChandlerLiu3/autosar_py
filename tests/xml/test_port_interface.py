@@ -910,5 +910,34 @@ class TestModeSwitchInterface(unittest.TestCase):
         self.assertEqual(str(elem.mode_group.type_ref), mode_declaration_ref)
 
 
+    class TestTriggerInterface(unittest.TestCase):
+
+      def test_name_only(self):
+        element = ar_element.TriggerInterface("InterfaceName")
+        writer = autosar.xml.Writer()
+        xml = '''<TRIGGER-INTERFACE>
+      <SHORT-NAME>InterfaceName</SHORT-NAME>
+    </TRIGGER-INTERFACE>'''
+        self.assertEqual(writer.write_str_elem(element), xml)
+        reader = autosar.xml.Reader()
+        elem: ar_element.TriggerInterface = reader.read_str_elem(xml)
+        self.assertIsInstance(elem, ar_element.TriggerInterface)
+        self.assertEqual(elem.name, "InterfaceName")
+
+      def test_is_service(self):
+        element = ar_element.TriggerInterface("ServiceInterface", is_service=True)
+        writer = autosar.xml.Writer()
+        xml = '''<TRIGGER-INTERFACE>
+      <SHORT-NAME>ServiceInterface</SHORT-NAME>
+      <IS-SERVICE>true</IS-SERVICE>
+    </TRIGGER-INTERFACE>'''
+        self.assertEqual(writer.write_str_elem(element), xml)
+        reader = autosar.xml.Reader()
+        elem: ar_element.TriggerInterface = reader.read_str_elem(xml)
+        self.assertIsInstance(elem, ar_element.TriggerInterface)
+        self.assertEqual(elem.name, "ServiceInterface")
+        self.assertEqual(elem.is_service, True)
+
+
 if __name__ == '__main__':
     unittest.main()
