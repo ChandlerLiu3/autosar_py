@@ -4323,20 +4323,51 @@ class ModeSwitchInterface(PortInterface):
         return self.mode_group
 
 
-class TriggerInterface(PortInterface):
+class Trigger(Identifiable):
     """
-    Complex type AR:TRIGGER-INTERFACE
-    Tag variants: 'TRIGGER-INTERFACE'
-
-    The full TRIGGER child model is not implemented yet in this library.
-    This class provides the port-interface shell so TRIGGER-INTERFACE can be
-    parsed, referenced and serialized consistently.
+    Complex type AR:TRIGGER
+    Tag variants: 'TRIGGER'
     """
 
     def __init__(self,
                  name: str,
                  **kwargs) -> None:
         super().__init__(name, **kwargs)
+
+    def ref(self) -> TriggerRef | None:
+        """
+        Returns a reference to this element or None if the element
+        is not yet part of a package
+        """
+        ref_str = self._calc_ref_string()
+        if ref_str is None:
+            return None
+        return TriggerRef(ref_str, ar_enum.IdentifiableSubTypes.TRIGGER)
+
+
+class TriggerInterface(PortInterface):
+    """
+    Complex type AR:TRIGGER-INTERFACE
+    Tag variants: 'TRIGGER-INTERFACE'
+
+    Implements TRIGGER-INTERFACE and its TRIGGERS child group.
+    """
+
+    def __init__(self,
+                 name: str,
+                 triggers: Trigger | list[Trigger] | None = None,
+                 **kwargs) -> None:
+        super().__init__(name, **kwargs)
+        self.triggers: list[Trigger] = []
+        if triggers is not None:
+            if isinstance(triggers, Trigger):
+                self.append_trigger(triggers)
+            elif isinstance(triggers, list):
+                for trigger in triggers:
+                    self.append_trigger(trigger)
+            else:
+                msg = f"triggers: Invalid type '{str(type(triggers))}'"
+                raise TypeError(msg + ". Expected 'Trigger' or list[Trigger]")
 
     def ref(self) -> PortInterfaceRef | None:
         """
@@ -4347,6 +4378,29 @@ class TriggerInterface(PortInterface):
         if ref_str is None:
             return None
         return PortInterfaceRef(ref_str, ar_enum.IdentifiableSubTypes.TRIGGER_INTERFACE)
+
+    def append_trigger(self, trigger: Trigger) -> None:
+        """
+        Appends trigger to internal list of triggers
+        """
+        if isinstance(trigger, Trigger):
+            self.triggers.append(trigger)
+            trigger.parent = self
+        else:
+            msg = f"trigger: Invalid type '{str(type(trigger))}'"
+            raise TypeError(msg + ". Expected 'Trigger'")
+
+    def create_trigger(self,
+                       name: str,
+                       **kwargs) -> Trigger:
+        """
+        #convenience-method
+
+        Adds a new trigger to this trigger interface
+        """
+        trigger = Trigger(name, **kwargs)
+        self.append_trigger(trigger)
+        return trigger
 
 # --- System Template Elements
 

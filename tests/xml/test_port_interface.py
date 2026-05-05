@@ -938,6 +938,37 @@ class TestModeSwitchInterface(unittest.TestCase):
         self.assertEqual(elem.name, "ServiceInterface")
         self.assertEqual(elem.is_service, True)
 
+    def test_triggers_in_constructor(self):
+        trigger1 = ar_element.Trigger("Trigger1")
+        trigger2 = ar_element.Trigger("Trigger2")
+        element = ar_element.TriggerInterface("InterfaceName", triggers=[trigger1, trigger2])
+        writer = autosar.xml.Writer()
+        xml = '''<TRIGGER-INTERFACE>
+  <SHORT-NAME>InterfaceName</SHORT-NAME>
+  <TRIGGERS>
+    <TRIGGER>
+      <SHORT-NAME>Trigger1</SHORT-NAME>
+    </TRIGGER>
+    <TRIGGER>
+      <SHORT-NAME>Trigger2</SHORT-NAME>
+    </TRIGGER>
+  </TRIGGERS>
+</TRIGGER-INTERFACE>'''
+        self.assertEqual(writer.write_str_elem(element), xml)
+        reader = autosar.xml.Reader()
+        elem: ar_element.TriggerInterface = reader.read_str_elem(xml)
+        self.assertIsInstance(elem, ar_element.TriggerInterface)
+        self.assertEqual(len(elem.triggers), 2)
+        self.assertEqual(elem.triggers[0].name, "Trigger1")
+        self.assertEqual(elem.triggers[1].name, "Trigger2")
+
+    def test_create_trigger(self):
+        element = ar_element.TriggerInterface("InterfaceName")
+        trigger = element.create_trigger("Trigger1")
+        self.assertIsInstance(trigger, ar_element.Trigger)
+        self.assertEqual(len(element.triggers), 1)
+        self.assertEqual(element.triggers[0].name, "Trigger1")
+
 
 if __name__ == '__main__':
     unittest.main()

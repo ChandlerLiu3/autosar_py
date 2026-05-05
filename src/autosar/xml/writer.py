@@ -341,6 +341,7 @@ class Writer(_XMLWriter):
             'ModeErrorBehavior': self._write_mode_error_behavior,
             'ModeTransition': self._write_mode_transition,
             'ModeDeclarationGroupPrototype': self._write_mode_declaration_group_prototype,
+            'Trigger': self._write_trigger,
             # System template elements
             'EndToEndTransformationComSpecProps': self._write_e2e_transformation_com_spec_props,
             # Software component elements
@@ -3295,6 +3296,28 @@ class Writer(_XMLWriter):
             self._write_mode_declaration_group_prototype(elem.mode_group, "MODE-GROUP")
         self._leave_child()
 
+    def _write_trigger(self, elem: ar_element.Trigger) -> None:
+        """
+        Writes complex type AR:TRIGGER
+        Tag variants: 'TRIGGER'
+        """
+        assert isinstance(elem, ar_element.Trigger)
+        self._add_child("TRIGGER")
+        self._write_referrable(elem)
+        self._write_multilanguage_referrable(elem)
+        self._write_identifiable(elem)
+        self._leave_child()
+
+    def _write_trigger_interface_group(self, elem: ar_element.TriggerInterface) -> None:
+        """
+        Writes group AR:TRIGGER-INTERFACE
+        """
+        if elem.triggers:
+            self._add_child("TRIGGERS")
+            for trigger in elem.triggers:
+                self._write_trigger(trigger)
+            self._leave_child()
+
     def _write_trigger_interface(self, elem: ar_element.TriggerInterface) -> None:
         """
         Writes complex type AR:TRIGGER-INTERFACE
@@ -3306,6 +3329,7 @@ class Writer(_XMLWriter):
         self._write_multilanguage_referrable(elem)
         self._write_identifiable(elem)
         self._write_port_interface(elem)
+        self._write_trigger_interface_group(elem)
         self._leave_child()
 
     # --- System template elements

@@ -287,6 +287,7 @@ class Reader:
             'MODE-USER-ERROR-BEHAVIOR': self._read_mode_error_behavior,
             'MODE-TRANSITION': self._read_mode_transition,
             'MODE-DECLARATION-GROUP-PROTOTYPE': self._read_mode_declaration_group_prototype,
+            'TRIGGER': self._read_trigger,
             # SystemTemplate elements
             'END-TO-END-TRANSFORMATION-COM-SPEC-PROPS': self._read_e2e_transformation_com_spec_props,
             # Software component elements
@@ -3706,6 +3707,32 @@ class Reader:
         self._report_unprocessed_elements(child_elements)
         return ar_element.ModeSwitchInterface(**data)
 
+    def _read_trigger(self, xml_element: ElementTree.Element) -> ar_element.Trigger:
+        """
+        Reads complex type AR:TRIGGER
+        Tag variants: 'TRIGGER'
+        """
+        data = {}
+        child_elements = ChildElementMap(xml_element)
+        self._read_referrable(child_elements, data)
+        self._read_multi_language_referrable(child_elements, data)
+        self._read_identifiable(child_elements, xml_element.attrib, data)
+        self._report_unprocessed_elements(child_elements)
+        return ar_element.Trigger(**data)
+
+    def _read_trigger_interface_group(self, child_elements: ChildElementMap, data: dict) -> None:
+        """
+        Reads group AR:TRIGGER-INTERFACE
+        """
+        xml_child = child_elements.get('TRIGGERS')
+        if xml_child is not None:
+            triggers = []
+            data['triggers'] = triggers
+            for xml_grand_child in xml_child.findall('./*'):
+                if xml_grand_child.tag == 'TRIGGER':
+                    element = self._read_trigger(xml_grand_child)
+                    triggers.append(element)
+
     def _read_trigger_interface(self, xml_element: ElementTree.Element) -> ar_element.TriggerInterface:
         """
         Reads complex type AR:TRIGGER-INTERFACE
@@ -3717,7 +3744,7 @@ class Reader:
         self._read_multi_language_referrable(child_elements, data)
         self._read_identifiable(child_elements, xml_element.attrib, data)
         self._read_port_interface(child_elements, data)
-        child_elements.skip('TRIGGERS')
+        self._read_trigger_interface_group(child_elements, data)
         self._report_unprocessed_elements(child_elements)
         return ar_element.TriggerInterface(**data)
 
