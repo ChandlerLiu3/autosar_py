@@ -224,8 +224,13 @@ class Writer(_XMLWriter):
             'E2EProfileCompatibilityProps': self._write_e2e_profile_compatibility_props,
             # Software component elements
             'ApplicationSoftwareComponentType': self._write_application_software_component_type,
+            'ServiceSoftwareComponentType': self._write_service_software_component_type,
             'CompositionSwComponentType': self._write_composition_sw_component_type,
             'SwcImplementation': self._write_swc_implementation,
+            'BswModuleDescription': self._write_bsw_module_description,
+            'BswModuleEntry': self._write_bsw_module_entry,
+            'SwcBswMapping': self._write_swc_bsw_mapping,
+            'BswImplementation': self._write_bsw_implementation,
         }
         # Value specification elements
         self.switcher_value_specification = {
@@ -2021,7 +2026,11 @@ class Writer(_XMLWriter):
             for child_elem in elem.data_type_maps:
                 self._write_data_type_map(child_elem)
             self._leave_child()
-        # .MODE-REQUEST-TYPE-MAPS not yet implemented
+        if len(elem.mode_request_type_maps) > 0:
+            self._add_child("MODE-REQUEST-TYPE-MAPS")
+            for child_elem in elem.mode_request_type_maps:
+                self._write_mode_request_type_map(child_elem)
+            self._leave_child()
         self._leave_child()
 
     def _write_value_list(self, elem: ar_element.ValueList) -> None:
@@ -3941,6 +3950,20 @@ class Writer(_XMLWriter):
         self._write_atomic_sw_component_type(elem)
         self._leave_child()
 
+    def _write_service_software_component_type(self, elem: ar_element.ServiceSoftwareComponentType) -> None:
+        """
+        Writes complex type AR:SERVICE-SW-COMPONENT-TYPE
+        Tag variants: 'SERVICE-SW-COMPONENT-TYPE'
+        """
+        assert isinstance(elem, ar_element.ServiceSoftwareComponentType)
+        self._add_child("SERVICE-SW-COMPONENT-TYPE")
+        self._write_referrable(elem)
+        self._write_multilanguage_referrable(elem)
+        self._write_identifiable(elem)
+        self._write_sw_component_type(elem)
+        self._write_atomic_sw_component_type(elem)
+        self._leave_child()
+
     def _write_sw_component_prototype(self, elem: ar_element.SwComponentPrototype) -> None:
         """
         Writes complex type AR:SW-COMPONENT-PROTOTYPE
@@ -4095,6 +4118,75 @@ class Writer(_XMLWriter):
         # .PER-INSTANCE-MEMORY-SIZES not yet supported
         if elem.required_rte_vendor is not None:
             self._add_content("REQUIRED-RTE-VENDOR", elem.required_rte_vendor)
+
+    def _write_bsw_module_description(self, elem: ar_element.BswModuleDescription) -> None:
+        """
+        Writes complex type AR:BSW-MODULE-DESCRIPTION
+        Tag variants: 'BSW-MODULE-DESCRIPTION'
+        """
+        assert isinstance(elem, ar_element.BswModuleDescription)
+        self._add_child("BSW-MODULE-DESCRIPTION")
+        self._write_referrable(elem)
+        self._write_multilanguage_referrable(elem)
+        self._write_identifiable(elem)
+        if elem.module_id is not None:
+            self._add_content("MODULE-ID", elem.module_id)
+        self._leave_child()
+
+    def _write_bsw_module_entry(self, elem: ar_element.BswModuleEntry) -> None:
+        """
+        Writes complex type AR:BSW-MODULE-ENTRY
+        Tag variants: 'BSW-MODULE-ENTRY'
+        """
+        assert isinstance(elem, ar_element.BswModuleEntry)
+        self._add_child("BSW-MODULE-ENTRY")
+        self._write_referrable(elem)
+        self._write_multilanguage_referrable(elem)
+        self._write_identifiable(elem)
+        if elem.service_id is not None:
+            self._add_content("SERVICE-ID", elem.service_id)
+        if elem.is_reentrant is not None:
+            self._add_content("IS-REENTRANT", self._format_boolean(elem.is_reentrant))
+        if elem.is_synchronous is not None:
+            self._add_content("IS-SYNCHRONOUS", self._format_boolean(elem.is_synchronous))
+        if elem.call_type is not None:
+            self._add_content("CALL-TYPE", elem.call_type)
+        if elem.execution_context is not None:
+            self._add_content("EXECUTION-CONTEXT", elem.execution_context)
+        if elem.sw_service_impl_policy is not None:
+            self._add_content("SW-SERVICE-IMPL-POLICY", elem.sw_service_impl_policy)
+        self._leave_child()
+
+    def _write_swc_bsw_mapping(self, elem: ar_element.SwcBswMapping) -> None:
+        """
+        Writes complex type AR:SWC-BSW-MAPPING
+        Tag variants: 'SWC-BSW-MAPPING'
+        """
+        assert isinstance(elem, ar_element.SwcBswMapping)
+        self._add_child("SWC-BSW-MAPPING")
+        self._write_referrable(elem)
+        self._write_multilanguage_referrable(elem)
+        self._write_identifiable(elem)
+        if elem.bsw_behavior_ref is not None:
+            self._add_content("BSW-BEHAVIOR-REF", elem.bsw_behavior_ref,
+                              attr=[("DEST", "BSW-INTERNAL-BEHAVIOR")])
+        if elem.swc_behavior_ref is not None:
+            self._add_content("SWC-BEHAVIOR-REF", elem.swc_behavior_ref,
+                              attr=[("DEST", "SWC-INTERNAL-BEHAVIOR")])
+        self._leave_child()
+
+    def _write_bsw_implementation(self, elem: ar_element.BswImplementation) -> None:
+        """
+        Writes complex type AR:BSW-IMPLEMENTATION
+        Tag variants: 'BSW-IMPLEMENTATION'
+        """
+        assert isinstance(elem, ar_element.BswImplementation)
+        self._add_child("BSW-IMPLEMENTATION")
+        self._write_referrable(elem)
+        self._write_multilanguage_referrable(elem)
+        self._write_identifiable(elem)
+        self._write_implementtion(elem)
+        self._leave_child()
 
     def _write_p_mode_group_in_atomic_swc_instance_ref(self,
                                                        elem: ar_element.PModeGroupInAtomicSwcInstanceRef,

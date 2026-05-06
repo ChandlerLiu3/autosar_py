@@ -172,8 +172,13 @@ class Reader:
             # Software component elements
             'APPLICATION-SW-COMPONENT-TYPE': self._read_application_sw_component_type,
             'ECU-ABSTRACTION-SW-COMPONENT-TYPE': self._read_application_sw_component_type,
+            'SERVICE-SW-COMPONENT-TYPE': self._read_service_sw_component_type,
             'COMPOSITION-SW-COMPONENT-TYPE': self._read_composition_sw_component_type,
             'SWC-IMPLEMENTATION': self._read_swc_implementation,
+            'BSW-MODULE-DESCRIPTION': self._read_bsw_module_description,
+            'BSW-MODULE-ENTRY': self._read_bsw_module_entry,
+            'SWC-BSW-MAPPING': self._read_swc_bsw_mapping,
+            'BSW-IMPLEMENTATION': self._read_bsw_implementation,
 
         }
         # Value specification elements
@@ -2295,6 +2300,12 @@ class Reader:
             for xml_data_type_map_element in xml_child.findall("./DATA-TYPE-MAP"):
                 data_type_maps.append(self._read_data_type_map(xml_data_type_map_element))
             data["data_type_maps"] = data_type_maps
+        xml_child = child_elements.get("MODE-REQUEST-TYPE-MAPS")
+        if xml_child is not None:
+            mode_request_type_maps = []
+            for xml_mode_request_type_map in xml_child.findall("./MODE-REQUEST-TYPE-MAP"):
+                mode_request_type_maps.append(self._read_mode_request_type_map(xml_mode_request_type_map))
+            data["mode_request_type_maps"] = mode_request_type_maps
 
     def _read_value_list(self, xml_element: ElementTree.Element) -> ar_element.ValueList:
         """
@@ -4469,6 +4480,23 @@ class Reader:
         self._report_unprocessed_elements(child_elements)
         return ar_element.ApplicationSoftwareComponentType(**data)
 
+    def _read_service_sw_component_type(self,
+                                        xml_element: ElementTree.Element
+                                        ) -> ar_element.ServiceSoftwareComponentType:
+        """
+        Reads complex type AR:SERVICE-SW-COMPONENT-TYPE
+        Tag variants: 'SERVICE-SW-COMPONENT-TYPE'
+        """
+        data = {}
+        child_elements = ChildElementMap(xml_element)
+        self._read_referrable(child_elements, data)
+        self._read_multi_language_referrable(child_elements, data)
+        self._read_identifiable(child_elements, xml_element.attrib, data)
+        self._read_sw_component_type(child_elements, data)
+        self._read_atomic_sw_component_type(child_elements, data)
+        self._report_unprocessed_elements(child_elements)
+        return ar_element.ServiceSoftwareComponentType(**data)
+
     def _read_sw_component_prototype(self, xml_element: ElementTree.Element) -> ar_element.SwComponentPrototype:
         """
         Complex type AR:SW-COMPONENT-PROTOTYPE
@@ -4653,6 +4681,99 @@ class Reader:
         xml_child = child_elements.get("REQUIRED-RTE-VENDOR")
         if xml_child is not None:
             data["required_rte_vendor"] = xml_child.text
+
+    def _read_bsw_module_description(self,
+                                     xml_element: ElementTree.Element
+                                     ) -> ar_element.BswModuleDescription:
+        """
+        Reads complex type AR:BSW-MODULE-DESCRIPTION
+        Tag variants: 'BSW-MODULE-DESCRIPTION'
+        """
+        data = {}
+        child_elements = ChildElementMap(xml_element)
+        self._read_referrable(child_elements, data)
+        self._read_multi_language_referrable(child_elements, data)
+        self._read_identifiable(child_elements, xml_element.attrib, data)
+        xml_child = child_elements.get("MODULE-ID")
+        if xml_child is not None:
+            data["module_id"] = xml_child.text
+        child_elements.skip("PROVIDED-ENTRYS")
+        child_elements.skip("PROVIDED-MODE-GROUPS")
+        child_elements.skip("REQUIRED-MODE-GROUPS")
+        child_elements.skip("INTERNAL-BEHAVIORS")
+        self._report_unprocessed_elements(child_elements)
+        return ar_element.BswModuleDescription(**data)
+
+    def _read_bsw_module_entry(self,
+                               xml_element: ElementTree.Element
+                               ) -> ar_element.BswModuleEntry:
+        """
+        Reads complex type AR:BSW-MODULE-ENTRY
+        Tag variants: 'BSW-MODULE-ENTRY'
+        """
+        data = {}
+        child_elements = ChildElementMap(xml_element)
+        self._read_referrable(child_elements, data)
+        self._read_multi_language_referrable(child_elements, data)
+        self._read_identifiable(child_elements, xml_element.attrib, data)
+        xml_child = child_elements.get("SERVICE-ID")
+        if xml_child is not None:
+            data["service_id"] = xml_child.text
+        xml_child = child_elements.get("IS-REENTRANT")
+        if xml_child is not None:
+            data["is_reentrant"] = self._read_boolean(xml_child.text)
+        xml_child = child_elements.get("IS-SYNCHRONOUS")
+        if xml_child is not None:
+            data["is_synchronous"] = self._read_boolean(xml_child.text)
+        xml_child = child_elements.get("CALL-TYPE")
+        if xml_child is not None:
+            data["call_type"] = xml_child.text
+        xml_child = child_elements.get("EXECUTION-CONTEXT")
+        if xml_child is not None:
+            data["execution_context"] = xml_child.text
+        xml_child = child_elements.get("SW-SERVICE-IMPL-POLICY")
+        if xml_child is not None:
+            data["sw_service_impl_policy"] = xml_child.text
+        self._report_unprocessed_elements(child_elements)
+        return ar_element.BswModuleEntry(**data)
+
+    def _read_swc_bsw_mapping(self,
+                              xml_element: ElementTree.Element
+                              ) -> ar_element.SwcBswMapping:
+        """
+        Reads complex type AR:SWC-BSW-MAPPING
+        Tag variants: 'SWC-BSW-MAPPING'
+        """
+        data = {}
+        child_elements = ChildElementMap(xml_element)
+        self._read_referrable(child_elements, data)
+        self._read_multi_language_referrable(child_elements, data)
+        self._read_identifiable(child_elements, xml_element.attrib, data)
+        xml_child = child_elements.get("BSW-BEHAVIOR-REF")
+        if xml_child is not None:
+            data["bsw_behavior_ref"] = xml_child.text
+        child_elements.skip("RUNNABLE-MAPPINGS")
+        xml_child = child_elements.get("SWC-BEHAVIOR-REF")
+        if xml_child is not None:
+            data["swc_behavior_ref"] = xml_child.text
+        self._report_unprocessed_elements(child_elements)
+        return ar_element.SwcBswMapping(**data)
+
+    def _read_bsw_implementation(self,
+                                 xml_element: ElementTree.Element
+                                 ) -> ar_element.BswImplementation:
+        """
+        Reads complex type AR:BSW-IMPLEMENTATION
+        Tag variants: 'BSW-IMPLEMENTATION'
+        """
+        data = {}
+        child_elements = ChildElementMap(xml_element)
+        self._read_referrable(child_elements, data)
+        self._read_multi_language_referrable(child_elements, data)
+        self._read_identifiable(child_elements, xml_element.attrib, data)
+        self._read_implementation(child_elements, data)
+        self._report_unprocessed_elements(child_elements)
+        return ar_element.BswImplementation(**data)
 
     def _read_p_mode_group_in_atomic_swc_instance_ref(self,
                                                       xml_element: ElementTree.Element

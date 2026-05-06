@@ -795,6 +795,15 @@ class Implementation(ARElement):
         else:
             raise TypeError("code_descriptors must be of type Code")
 
+
+class BswImplementation(Implementation):
+    """
+    Complex type AR:BSW-IMPLEMENTATION
+    Tag variants: 'BSW-IMPLEMENTATION'
+
+    Same constructor as parent class
+    """
+
 # --- Documentation Elements
 
 
@@ -2762,10 +2771,11 @@ class DataTypeMappingSet(ARElement):
     def __init__(self,
                  name: str,
                  data_type_maps: DataTypeMap | list[DataTypeMap] | None = None,
+                 mode_request_type_maps: "ModeRequestTypeMap | list[ModeRequestTypeMap] | None" = None,
                  **kwargs: dict) -> None:
         super().__init__(name, **kwargs)
         self.data_type_maps: list[DataTypeMap] = []  # .DATA-TYPE-MAPS
-        self.mode_request_type_maps = []  # .MODE-REQUEST-TYPE-MAPS (Not yet implemented)
+        self.mode_request_type_maps: list["ModeRequestTypeMap"] = []  # .MODE-REQUEST-TYPE-MAPS
         if data_type_maps is not None:
             if isinstance(data_type_maps, DataTypeMap):
                 self.append(data_type_maps)
@@ -2774,17 +2784,88 @@ class DataTypeMappingSet(ARElement):
                     self.append(data_type_map)
             else:
                 raise TypeError(f'data_type_maps: Invalid type "{str(type(data_type_maps))}"')
+        if mode_request_type_maps is not None:
+            if isinstance(mode_request_type_maps, ModeRequestTypeMap):
+                self.append(mode_request_type_maps)
+            elif isinstance(mode_request_type_maps, list):
+                for mode_request_type_map in mode_request_type_maps:
+                    self.append(mode_request_type_map)
+            else:
+                raise TypeError(f'mode_request_type_maps: Invalid type "{str(type(mode_request_type_maps))}"')
 
-    def append(self, element: DataTypeMap) -> None:
+    def append(self, element: Union[DataTypeMap, "ModeRequestTypeMap"]) -> None:
         """
         Appends element to one of the inner lists based on parameter type
-        Currently, appending to mode_request_type_maps isn't
-        implemented.
         """
         if isinstance(element, DataTypeMap):
             self.data_type_maps.append(element)
+        elif isinstance(element, ModeRequestTypeMap):
+            self.mode_request_type_maps.append(element)
         else:
             raise TypeError(f'Unexpected type: "{str(type(element))}"')
+
+
+class BswModuleDescription(ARElement):
+    """
+    Complex type AR:BSW-MODULE-DESCRIPTION
+    Tag variants: 'BSW-MODULE-DESCRIPTION'
+    """
+
+    def __init__(self,
+                 name: str,
+                 module_id: str | None = None,
+                 **kwargs) -> None:
+        super().__init__(name, **kwargs)
+        self.module_id: str | None = None  # .MODULE-ID
+        self._assign_optional('module_id', module_id, str)
+
+
+class BswModuleEntry(ARElement):
+    """
+    Complex type AR:BSW-MODULE-ENTRY
+    Tag variants: 'BSW-MODULE-ENTRY'
+    """
+
+    def __init__(self,
+                 name: str,
+                 service_id: str | None = None,
+                 is_reentrant: bool | None = None,
+                 is_synchronous: bool | None = None,
+                 call_type: str | None = None,
+                 execution_context: str | None = None,
+                 sw_service_impl_policy: str | None = None,
+                 **kwargs) -> None:
+        super().__init__(name, **kwargs)
+        self.service_id: str | None = None  # .SERVICE-ID
+        self.is_reentrant: bool | None = None  # .IS-REENTRANT
+        self.is_synchronous: bool | None = None  # .IS-SYNCHRONOUS
+        self.call_type: str | None = None  # .CALL-TYPE
+        self.execution_context: str | None = None  # .EXECUTION-CONTEXT
+        self.sw_service_impl_policy: str | None = None  # .SW-SERVICE-IMPL-POLICY
+        self._assign_optional('service_id', service_id, str)
+        self._assign_optional('is_reentrant', is_reentrant, bool)
+        self._assign_optional('is_synchronous', is_synchronous, bool)
+        self._assign_optional('call_type', call_type, str)
+        self._assign_optional('execution_context', execution_context, str)
+        self._assign_optional('sw_service_impl_policy', sw_service_impl_policy, str)
+
+
+class SwcBswMapping(ARElement):
+    """
+    Complex type AR:SWC-BSW-MAPPING
+    Tag variants: 'SWC-BSW-MAPPING'
+    """
+
+    def __init__(self,
+                 name: str,
+                 bsw_behavior_ref: str | None = None,
+                 swc_behavior_ref: str | None = None,
+                 **kwargs) -> None:
+        super().__init__(name, **kwargs)
+        self.bsw_behavior_ref: str | None = None  # .BSW-BEHAVIOR-REF
+        self.swc_behavior_ref: str | None = None  # .SWC-BEHAVIOR-REF
+        self._assign_optional('bsw_behavior_ref', bsw_behavior_ref, str)
+        self._assign_optional('swc_behavior_ref', swc_behavior_ref, str)
 
     def ref(self) -> DataTypeMappingSetRef | None:
         """
@@ -5712,6 +5793,25 @@ class ApplicationSoftwareComponentType(AtomicSoftwareComponentType):
         if ref_str is None:
             return None
         return SwComponentTypeRef(ref_str, ar_enum.IdentifiableSubTypes.APPLICATION_SW_COMPONENT_TYPE)
+
+
+class ServiceSoftwareComponentType(AtomicSoftwareComponentType):
+    """
+    Complex type AR:SERVICE-SW-COMPONENT-TYPE
+    Tag variants: 'SERVICE-SW-COMPONENT-TYPE'
+
+    Same constructor as parent class
+    """
+
+    def ref(self) -> SwComponentTypeRef | None:
+        """
+        Returns a reference to this element or None if the element
+        is not yet part of a package
+        """
+        ref_str = self._calc_ref_string()
+        if ref_str is None:
+            return None
+        return SwComponentTypeRef(ref_str, ar_enum.IdentifiableSubTypes.SERVICE_SW_COMPONENT_TYPE)
 
 
 class SwComponentPrototype(Identifiable):

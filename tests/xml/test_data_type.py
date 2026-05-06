@@ -1926,6 +1926,31 @@ class TestDataTypeMappingSet(unittest.TestCase):
         self.assertEqual(data_type_map.impl_data_type_ref.dest,
                          ar_enum.IdentifiableSubTypes.IMPLEMENTATION_DATA_TYPE)
 
+    def test_read_write_mode_request_type_maps(self):
+        mode_request_type_map = ar_element.ModeRequestTypeMap(
+            implementation_data_type=ar_element.ImplementationDataTypeRef("/ImplementationTypes/ModeType"),
+            mode_group=ar_element.ModeDeclarationGroupRef("/ModeDeclGroups/SystemMode"),
+        )
+        element = ar_element.DataTypeMappingSet("MappingSet", mode_request_type_maps=mode_request_type_map)
+        xml = '''<DATA-TYPE-MAPPING-SET>
+  <SHORT-NAME>MappingSet</SHORT-NAME>
+  <MODE-REQUEST-TYPE-MAPS>
+    <MODE-REQUEST-TYPE-MAP>
+      <IMPLEMENTATION-DATA-TYPE-REF DEST="IMPLEMENTATION-DATA-TYPE">/ImplementationTypes/ModeType</IMPLEMENTATION-DATA-TYPE-REF>
+      <MODE-GROUP-REF DEST="MODE-DECLARATION-GROUP">/ModeDeclGroups/SystemMode</MODE-GROUP-REF>
+    </MODE-REQUEST-TYPE-MAP>
+  </MODE-REQUEST-TYPE-MAPS>
+</DATA-TYPE-MAPPING-SET>'''
+        writer = autosar.xml.Writer()
+        self.assertEqual(writer.write_str_elem(element), xml)
+        reader = autosar.xml.Reader()
+        elem: ar_element.DataTypeMappingSet = reader.read_str_elem(xml)
+        self.assertIsInstance(elem, ar_element.DataTypeMappingSet)
+        self.assertEqual(len(elem.mode_request_type_maps), 1)
+        parsed_map = elem.mode_request_type_maps[0]
+        self.assertEqual(str(parsed_map.implementation_data_type), "/ImplementationTypes/ModeType")
+        self.assertEqual(str(parsed_map.mode_group), "/ModeDeclGroups/SystemMode")
+
 
 class TestValueList(unittest.TestCase):
 
