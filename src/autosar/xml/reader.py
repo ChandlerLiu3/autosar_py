@@ -1367,7 +1367,7 @@ class Reader:
             data["desc"] = self._read_multi_language_overview_paragraph(xml_child)
         xml_child = child_elements.get("MASK")
         if xml_child is not None:
-            data["mask"] = int(xml_child.text)
+            data["mask"] = self._read_integer(xml_child.text)
         xml_child = child_elements.get("LOWER-LIMIT")
         if xml_child is not None:
             limit, interval_type = self._read_limit(xml_child)

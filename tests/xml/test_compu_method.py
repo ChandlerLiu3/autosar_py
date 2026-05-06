@@ -128,6 +128,15 @@ class TestCompuScale(unittest.TestCase): # noqa D101
         self.assertIsInstance(elem, ar_element.CompuScale)
         self.assertEqual(elem.mask, 255)
 
+    def test_read_binary_mask(self): # noqa D102
+        xml = '''<COMPU-SCALE>
+  <MASK>0b00000001</MASK>
+</COMPU-SCALE>'''
+        reader = autosar.xml.Reader()
+        elem: ar_element.CompuScale = reader.read_str_elem(xml)
+        self.assertIsInstance(elem, ar_element.CompuScale)
+        self.assertEqual(elem.mask, 1)
+
     def test_write_read_limit_with_default_interval_type(self): # noqa D102
         element = ar_element.CompuScale(lower_limit=1, upper_limit=2)
         writer = autosar.xml.Writer()
